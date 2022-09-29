@@ -1,4 +1,4 @@
-module gitlab.com/aag/unity/development-tooling-and-plugins/token-decoder
+module github.com/davidlawson7/jose-cli
 
 go 1.18
 

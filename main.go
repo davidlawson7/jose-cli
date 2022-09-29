@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gitlab.com/aag/unity/development-tooling-and-plugins/token-decoder/cmd"
+	"github.com/davidlawson7/jose-cli/cmd"
 )
 
 func main() {

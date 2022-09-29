@@ -4,9 +4,12 @@ import (
 	"encoding/base64"
 	"fmt"
 	"os"
+	"os/user"
+	"path/filepath"
 	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/square/go-jose"
 )
 
@@ -17,6 +20,31 @@ var rootCmd = &cobra.Command{
                 love in Go.
                 Complete documentation is available in the repos readme.`,
   Run: func(cmd *cobra.Command, args []string) {
+		usr, err := user.Current()
+		if err != nil {
+			panic(fmt.Errorf("fatal error: %w", err))
+		}
+
+		configDir := filepath.Join(usr.HomeDir, ".josectl")
+		if _, err := os.Stat(configDir); os.IsNotExist(err) {
+			// path/to/whatever does not exist
+			os.MkdirAll(configDir, 0777)
+		}
+
+		viper.SetDefault("Keys", []string{})
+		viper.SetConfigName("config")
+		viper.SetConfigType("toml")
+		viper.AddConfigPath("$HOME/.josectl")
+		err = viper.ReadInConfig()
+
+		if err != nil {
+			err := viper.WriteConfigAs("/Users/dlawson/.josectl/config.toml")
+
+			if err != nil {
+				panic(fmt.Errorf("fatal error unable to create config.toml file: %w", err))
+			}
+		}
+
 		token, _ := cmd.Flags().GetString("token");
 		secret, _ := cmd.Flags().GetString("secret");
 
